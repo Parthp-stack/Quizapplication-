@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center mt-5 animate-fade-in">
+    <div class="col-md-8 col-lg-6">
+        <div class="card result-card p-5 text-center">
+            <div class="mb-4 result-icon-container animate-bounce">
+                {% if (score.score / score.total_questions) * 100 >= 80 %}
+                <i class="fas fa-trophy text-warning" style="font-size: 5rem;"></i>
+                {% elif (score.score / score.total_questions) * 100 >= 50 %}
+                <i class="fas fa-award text-primary" style="font-size: 5rem;"></i>
+                {% else %}
+                <i class="fas fa-redo text-danger" style="font-size: 5rem;"></i>
+                {% endif %}
+            </div>
+            
+            <h2 class="mb-3 fw-bold">Quiz Completed!</h2>
+            <h1 class="display-4 fw-bold text-primary mb-4">
+                {{ score.score }} / {{ score.total_questions }}
+            </h1>
+            
+            <h4 class="mb-4 text-muted">{{ message }}</h4>
+            
+            <div class="stats-container d-flex justify-content-center gap-4 mb-5">
+                <div class="stat-item">
+                    <span class="d-block text-muted small">Category</span>
+                    <strong class="text-capitalize">{{ score.category }}</strong>
+                </div>
+                <div class="stat-item">
+                    <span class="d-block text-muted small">Accuracy</span>
+                    <strong>{{ ((score.score / score.total_questions) * 100) | round | int }}%</strong>
+                </div>
+            </div>
+
+            <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary px-4">
+                    <i class="fas fa-home me-2"></i> Dashboard
+                </a>
+                <a href="{{ url_for('quiz', category=score.category) }}" class="btn btn-primary px-4">
+                    <i class="fas fa-redo me-2"></i> Retake Quiz
+                </a>
+            </div>
+            
+            <div class="mt-4">
+                <a href="{{ url_for('leaderboard') }}" class="text-decoration-none">
+                    <i class="fas fa-medal me-1"></i> See Leaderboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

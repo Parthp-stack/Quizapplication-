@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="quiz-container">
+    <div id="quiz-header" class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0 text-capitalize">{{ category }} Quiz</h2>
+        <span id="question-counter" class="badge bg-primary fs-6">Question 1/10</span>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress">
+            <div id="quiz-progress" class="progress-bar" role="progressbar" style="width: 10%"></div>
+        </div>
+    </div>
+
+    <div id="timer-display" class="timer-container">
+        <i class="fas fa-clock"></i>
+        <span id="timer-seconds">15</span>s
+    </div>
+
+    <div id="question-card" class="card question-card">
+        <div id="question-text" class="question-text">
+            Loading questions...
+        </div>
+        <div id="options-container" class="options-container">
+            <!-- Options will be dynamically loaded here -->
+        </div>
+    </div>
+
+    <div id="quiz-controls" class="mt-4 d-flex justify-content-between">
+        <button id="next-btn" class="btn btn-primary d-none">Next Question</button>
+        <button id="submit-btn" class="btn btn-success d-none">Submit Quiz</button>
+    </div>
+</div>
+
+<!-- Audio for correct answers -->
+<audio id="correct-sound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
+<audio id="incorrect-sound" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3" preload="auto"></audio>
+
+<script>
+    const categoryId = "{{ cat_id }}";
+    const categoryName = "{{ category }}";
+    const isPDF = "{{ is_pdf }}" === "True";
+    const pdfId = "{{ pdf_id }}";
+</script>
+<script src="{{ url_for('static', filename='js/quiz.js') }}"></script>
+{% endblock %}

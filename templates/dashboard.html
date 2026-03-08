@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col text-center">
+        <h1 class="fw-bold">Welcome, {{ name }}!</h1>
+        <p class="text-muted">Choose a category to start the quiz.</p>
+    </div>
+</div>
+
+<!-- PDF Upload Modal -->
+<div class="modal fade" id="pdfUploadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">Upload PDF for Quiz</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div id="pdf-preview-container" class="mb-4">
+                    <i class="fas fa-file-pdf fa-3x text-danger mb-3"></i>
+                </div>
+                <div id="pdf-upload-controls">
+                    <input type="text" id="pdf-title" class="form-control mb-3" placeholder="Enter quiz title (optional)" />
+                    <input type="file" id="pdf-file-input" accept=".pdf" class="d-none">
+                    <button id="select-pdf-btn" class="btn btn-outline-success w-100 mb-3">
+                        <i class="fas fa-upload me-2"></i> Select PDF File
+                    </button>
+                    <small class="text-muted">Maximum file size: 50 MB</small>
+                </div>
+                <div id="pdf-loading" class="d-none mt-3">
+                    <div class="spinner-border text-success mb-2" role="status"></div>
+                    <p>Processing PDF and generating questions...</p>
+                </div>
+                <div id="pdf-selected-file" class="d-none mt-3">
+                    <p id="selected-filename" class="text-muted"></p>
+                </div>
+                <button id="generate-pdf-quiz-btn" class="btn btn-success w-100 d-none">
+                    Generate Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AI Quiz from Photo Modal -->
+<div class="modal fade" id="aiQuizModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold">AI Quiz from Photo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div id="image-preview-container" class="mb-4 d-none">
+                    <img id="image-preview" src="" class="img-fluid rounded shadow-sm" style="max-height: 200px;">
+                </div>
+                <div id="upload-controls">
+                    <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                    <p>Capture or upload a photo (Max 50 total)</p>
+                    <input type="file" id="ai-image-input" accept="image/*" capture="environment" class="d-none">
+                    <button id="select-image-btn" class="btn btn-outline-primary w-100 mb-3">
+                        <i class="fas fa-plus me-2"></i> Select/Take Photo
+                    </button>
+                </div>
+                <div id="ai-loading" class="d-none mt-3">
+                    <div class="spinner-border text-primary mb-2" role="status"></div>
+                    <p>AI is analyzing and generating questions...</p>
+                </div>
+                <button id="generate-ai-quiz-btn" class="btn btn-primary w-100 d-none">
+                    Generate Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card category-card" onclick="window.location.href='/quiz/science'">
+            <div class="category-icon">
+                <i class="fas fa-flask"></i>
+            </div>
+            <h4 class="category-name">Science</h4>
+            <p class="text-muted">10 Questions</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card category-card" onclick="window.location.href='/quiz/technology'">
+            <div class="category-icon">
+                <i class="fas fa-microchip"></i>
+            </div>
+            <h4 class="category-name">Technology</h4>
+            <p class="text-muted">10 Questions</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card category-card" onclick="window.location.href='/quiz/general'">
+            <div class="category-icon">
+                <i class="fas fa-globe-americas"></i>
+            </div>
+            <h4 class="category-name">General Knowledge</h4>
+            <p class="text-muted">10 Questions</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3 mb-4">
+        <div class="card category-card" onclick="window.location.href='/quiz/sports'">
+            <div class="category-icon">
+                <i class="fas fa-football-ball"></i>
+            </div>
+            <h4 class="category-name">Sports</h4>
+            <p class="text-muted">10 Questions</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h3>Recent Activity</h3>
+            <p>Check your latest quiz performance.</p>
+            <a href="{{ url_for('history') }}" class="btn btn-outline-secondary mt-auto">View History</a>
+        </div>
+    </div>
+    <div class="col-md-6 mt-4 mt-md-0">
+        <div class="card p-4 h-100">
+            <h3>My PDF Quizzes</h3>
+            <p>View and retake quizzes from your PDFs.</p>
+            <a href="{{ url_for('my_pdf_quizzes') }}" class="btn btn-outline-secondary mt-auto">View PDFs</a>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card p-4 h-100">
+            <h3>Top Performers</h3>
+            <p>See how you rank against others.</p>
+            <a href="{{ url_for('leaderboard') }}" class="btn btn-outline-secondary mt-auto">View Leaderboard</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Wait for DOM to be ready and Bootstrap to be loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        // PDF Upload Modal
+        const pdfQuizBtn = document.getElementById('pdf-quiz-btn');
+        const pdfUploadModalElement = document.getElementById('pdfUploadModal');
+        
+        if (!pdfUploadModalElement) {
+            console.error('PDF Upload Modal element not found');
+            return;
+        }
+        
+        const pdfUploadModal = new bootstrap.Modal(pdfUploadModalElement);
+        const selectPdfBtn = document.getElementById('select-pdf-btn');
+        const pdfFileInput = document.getElementById('pdf-file-input');
+        const generatePdfQuizBtn = document.getElementById('generate-pdf-quiz-btn');
+        const pdfUploadControls = document.getElementById('pdf-upload-controls');
+        const pdfLoading = document.getElementById('pdf-loading');
+        const pdfSelectedFile = document.getElementById('pdf-selected-file');
+        const selectedFilename = document.getElementById('selected-filename');
+        const pdfTitleInput = document.getElementById('pdf-title');
+
+        if (pdfQuizBtn) {
+            pdfQuizBtn.addEventListener('click', () => {
+                pdfUploadModal.show();
+            });
+        }
+
+        if (selectPdfBtn) {
+            selectPdfBtn.addEventListener('click', () => {
+                pdfFileInput.click();
+            });
+        }
+
+        if (pdfFileInput) {
+            pdfFileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file && file.type === 'application/pdf') {
+                    selectedFilename.textContent = `Selected: ${file.name}`;
+                    pdfUploadControls.classList.add('d-none');
+                    pdfSelectedFile.classList.remove('d-none');
+                    generatePdfQuizBtn.classList.remove('d-none');
+                } else {
+                    alert('Please select a valid PDF file');
+                    pdfFileInput.value = '';
+                }
+            });
+        }
+
+        if (generatePdfQuizBtn) {
+            generatePdfQuizBtn.addEventListener('click', async () => {
+                const file = pdfFileInput.files[0];
+                const title = pdfTitleInput.value || (file ? file.name.replace('.pdf', '') : 'Untitled');
+
+                if (!file) {
+                    alert('Please select a PDF file');
+                    return;
+                }
+
+                pdfUploadControls.classList.add('d-none');
+                pdfSelectedFile.classList.add('d-none');
+                generatePdfQuizBtn.classList.add('d-none');
+                pdfLoading.classList.remove('d-none');
+
+                const formData = new FormData();
+                formData.append('pdf_file', file);
+                formData.append('pdf_title', title);
+
+                try {
+                    const response = await fetch('/upload-pdf', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'Failed to process PDF');
+                    }
+
+                    // Store quiz data in session and redirect
+                    sessionStorage.setItem('pdf_generated_quiz', JSON.stringify(data.results));
+                    sessionStorage.setItem('pdf_quiz_id', data.pdf_id);
+                    
+                    pdfUploadModal.hide();
+                    window.location.href = `/quiz-from-pdf/${data.pdf_id}`;
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                    pdfLoading.classList.add('d-none');
+                    pdfUploadControls.classList.remove('d-none');
+                    generatePdfQuizBtn.classList.remove('d-none');
+                    pdfSelectedFile.classList.add('d-none');
+                    pdfFileInput.value = '';
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
